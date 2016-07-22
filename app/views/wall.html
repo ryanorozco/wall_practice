@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<title>THE WALL </title>
+	<style>
+	body{
+		font-family: Georgia;
+	}
+	header{
+		display: block;
+		height: 50px;
+		border: .5px solid black;
+		border-bottom-left-radius: 10px;
+		border-bottom-right-radius: 10px;
+		font-family: Georgia;
+		background: black;
+		color: white;
+	}
+	h2{
+		text-align: center;
+		margin: 0;
+	}
+	#greeting{
+		text-align: center;
+	}
+	h3#welcome{
+		text-align: left;
+		margin: 10px 0 0 20px;
+		display: inline-block;
+		font-family: Georgia;
+	}
+	#msgfield{
+		color: black;
+		text-align: top;
+		width: 800px;
+		height: 100px;
+	}
+	#msgform{
+		text-align: right;
+		width: 800px;
+		height: 200px;
+		margin: 0 237.5px 0 237.5px;
+	}
+	form input{
+		font-family: Helvetica;
+	}
+	#messagediv{
+		width: 800px;
+		margin: 0 237.5px 0 237.5px;
+	}
+	#comfield{
+		width: 700px;
+		margin: 0 207px 0 335px;
+	}
+	h4{
+		font-style: italic;
+	}
+	#comment{
+		float: right;
+		margin-right: 230px;
+		background: linear-gradient(lightblue, white);
+		border-radius: 8px;
+		border: 1px solid grey;
+	}
+	#msgbutton{
+		background: linear-gradient(lightyellow, white);
+		border-radius: 8px;
+		border: 1px solid grey;
+	}
+	#logout{
+		text-align: right;
+		margin-right: 10px;
+		margin-top: 10px;
+	}
+	#logbutton{
+		background: linear-gradient(pink, white);
+		border-radius: 8px;
+		border: 1px solid grey;
+	}
+	.comtext{
+		text-align: left;
+		margin-left: 335px;
+	}
+
+	</style>
+</head>
+<header>
+<h3 id='welcome'>Welcome, {{ session['currentUser']['first_name'] }}</h3>
+</header>
+<body>
+	<form id='logout' action='/logout' method='post'>
+	<input id='logbutton' type='submit' name='logout' value='LOG OUT'>
+	</form>
+	<h2> THE WALL!!! </h2>
+	<form id='msgform' action='/message' method='post'>
+		<p id='greeting'>What's new? Write below and post a new message.</p>
+		<textarea id='msgfield' type='text' name='message'></textarea>
+		<input type="hidden" name="userId" value="{{ session['currentUser']['id'] }}">
+		<input id='msgbutton' type='submit' value='POST MESSAGE'>
+	</form>
+	<div>
+	{% for message in messageArray %}
+		<div id='messagediv'>
+		<h4 id='author'>{{ message['messageFirstName'] }} {{ message['messageLastName'] }} wrote this message on {{ message['messageTime'] }}.</h4>
+		<p id= 'message'>{{ message['message'] }}</p>
+		</div>
+			{% for comment in commentArray %}
+				{% if message['msgID'] == comment['message_id'] %}
+				<h4 class='comtext'>{{ comment['first_name'] }} {{ comment['last_name']}} wrote this comment on {{ comment['commentTime'] }}.</h4>
+				<p class='comtext'>{{ comment['comment'] }}</p>
+				{% endif %}
+			{% endfor %}
+		<form action='/comment' method='POST'>
+			<input type='hidden' name='userId' value="{{ session['currentUser']['id'] }}">
+			<input type='hidden' name='msgId' value="{{ message['msgID'] }}">
+			<textarea id='comfield' type='text' name='comment'></textarea>
+			<input id='comment' type='submit' value='POST COMMENT'>
+		</form>
+	{% endfor %}
+	</div>
+</body>
+</html>
